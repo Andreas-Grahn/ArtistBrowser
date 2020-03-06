@@ -10,8 +10,10 @@ import UIKit
 
 class AlbumCollection: UIViewController {
 
-    var apiClient = APIClient()
-    var albums: [Album]
+
+    let albumClient: AlbumProvider
+    let imageClient: ImageProvider
+    var albums: [AlbumThinned]
     var artist: Artist
 
     lazy var collectionView: UICollectionView = {
@@ -39,9 +41,11 @@ class AlbumCollection: UIViewController {
         view.backgroundColor = .systemBackground
     }
 
-    init(albums: [Album], artist: Artist) {
+    init(albums: [AlbumThinned], artist: Artist, albumClient: AlbumProvider, imageClient: ImageProvider ) {
         self.artist = artist
         self.albums = albums
+        self.albumClient = albumClient
+        self.imageClient = imageClient
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -71,61 +75,30 @@ extension AlbumCollection: UICollectionViewDataSource, UICollectionViewDelegateF
         return cell
     }
 
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard let albumItem = cell as? AlbumItem else { return }
+        guard let imageUrl = albumItem.album?.cover else { return }
+        imageClient.getImage(url: imageUrl) { image in
+            albumItem.setImage(image: image)
+        }
+    }
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-            return UIEdgeInsets(top: 10.0, left: 10.0, bottom: 10.0, right: 10.0)//here your custom value for spacing
+            return UIEdgeInsets(top: 10.0, left: 10.0, bottom: 10.0, right: 10.0)
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let album = albums[indexPath.item]
 
-
-
         SpinnerView.shared.showProgressView()
-        apiClient.getTracks(fromAlbum: "\(album.id)") { albumDetail in
 
-            let queue = OperationQueue()
-            var trackList = [TrackDetail]()
-            var coverImage: UIImage?
-
-
-            let operation1 = BlockOperation {
+        albumClient.getAlbumData(fromAlbum: album) { album in
+            self.imageClient.getImage(url: album.cover) { image in
                 DispatchQueue.main.async {
-                    let group = DispatchGroup()
-                    group.enter()
-                    self.apiClient.detailedTracks(fromAlbum: albumDetail) { tracks in
-                        trackList = tracks
-                        group.leave()
-                    }
-                    group.wait()
-                }
-            }
-
-            let operation2 = BlockOperation {
-                let group = DispatchGroup()
-                group.enter()
-
-                self.apiClient.getImage(url: album.cover) { image in
-                    coverImage = image
-                    group.leave()
-                }
-
-                group.wait()
-            }
-
-
-            let completionOperation = BlockOperation {
-
-                let backup = UIImage(named: "PlaceholderImage")!.withTintColor(.systemPink)
-                DispatchQueue.main.async {
-                    self.navigationController?.pushViewController(TracksTableView(album: albumDetail, tracks: trackList, coverImage: coverImage ?? backup), animated: true)
+                    self.navigationController?.pushViewController(TracksTableView(album: album, coverImage: image), animated: true)
                     SpinnerView.shared.hideProgressView()
                 }
             }
-
-            completionOperation.addDependency(operation1)
-            completionOperation.addDependency(operation2)
-
-            queue.addOperations([operation1, operation2, completionOperation], waitUntilFinished: true)
         }
     }
 }

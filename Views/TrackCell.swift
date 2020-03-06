@@ -10,8 +10,6 @@ import UIKit
 
 class TrackCell: UITableViewCell {
 
-    var client = APIClient()
-
     var trackDetail: TrackDetail? {
         didSet { DispatchQueue.main.async {
             if let details = self.trackDetail {

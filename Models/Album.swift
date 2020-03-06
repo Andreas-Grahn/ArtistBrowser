@@ -12,18 +12,40 @@ struct Album: Decodable {
     let id: Int
     let title: String
     let cover: String
-    let tracks: Int?
     var artist: Artist?
+    let tracksIds: TrackIdData
+    var tracks: [TrackDetail]?
 
     enum CodingKeys: String, CodingKey {
         case id
         case title
         case cover = "cover_big"
-        case tracks = "nb_tracks"
         case artist
+        case tracksIds = "tracks"
     }
 }
 
-struct DataAlbum: Decodable {
-    let data: [Album]
+struct TrackIdData: Decodable {
+    let data: [TrackId]
+}
+
+struct TrackId: Decodable {
+    let id: Int
+}
+
+
+struct AlbumThinned: Decodable {
+    let id: Int
+    let title: String
+    let cover: String
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case title
+        case cover = "cover_medium"
+    }
+}
+
+struct AlbumThinnedData: Decodable {
+    let data: [AlbumThinned]
 }

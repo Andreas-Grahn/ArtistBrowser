@@ -16,3 +16,7 @@ struct TrackDetail: Decodable {
     var disk_number: Int
     var contributors: [Artist]
 }
+
+struct TrackDetailData: Decodable {
+    var data: [TrackDetail]
+}

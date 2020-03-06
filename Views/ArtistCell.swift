@@ -10,17 +10,14 @@ import UIKit
 
 class ArtistCell: UITableViewCell {
 
-    var apiClient = APIClient()
+
     var artist: Artist? {
         didSet {
             artistLabel.text = artist?.name
-            apiClient.getImage(url: artist!.picture) { image in
-                self.setImage(image: image)
-            }
         }
     }
 
-    private func setImage(image: UIImage) {
+    func setImage(image: UIImage) {
         DispatchQueue.main.async {
             let renderer = UIGraphicsImageRenderer(size: CGSize(width: 50, height: 50))
             self.artistImage.image = renderer.image { (context) in
@@ -28,7 +25,6 @@ class ArtistCell: UITableViewCell {
             }
         }
     }
-
 
     lazy var artistImage: UIImageView = {
         let iv = UIImageView()

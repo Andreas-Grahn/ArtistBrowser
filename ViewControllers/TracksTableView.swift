@@ -10,16 +10,15 @@ import UIKit
 
 class TracksTableView: UIViewController {
 
-    let apiClient = APIClient()
-    let album: AlbumDetail
+    let album: Album
     let tracks: [TrackDetail]
     let coverImage: UIImage
 
 
-    init(album: AlbumDetail, tracks: [TrackDetail], coverImage: UIImage) {
+    init(album: Album, coverImage: UIImage) {
         self.album = album
-        self.tracks = tracks
         self.coverImage = coverImage
+        self.tracks = album.tracks!
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -91,12 +90,9 @@ extension TracksTableView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "trackCell", for: indexPath) as! TrackCell
+        let sectionTracks = tracks.filter( {$0.disk_number == indexPath.section+1} )
 
-        //let list = tracks.filter {$0.disk_number == indexPath.section+1}
-
-        let d = tracks.filter( {$0.disk_number == indexPath.section+1} )
-
-        cell.trackDetail = d[indexPath.row]
+        cell.trackDetail = sectionTracks[indexPath.row]
         return cell
     }
 
@@ -122,6 +118,9 @@ extension UITableView {
     }
 
     private func setFrame(of view: UIView) {
+        // Make sure the tableView has the correct frame before proceeding.
+        layoutIfNeeded()
+
         view.translatesAutoresizingMaskIntoConstraints = false
         let widthAnchor = view.widthAnchor.constraint(equalToConstant: bounds.width)
         widthAnchor.isActive = true
@@ -133,5 +132,8 @@ extension UITableView {
             origin: .zero,
             size: CGSize(width: bounds.width, height: height)
         )
+
+        widthAnchor.isActive = false
+        view.translatesAutoresizingMaskIntoConstraints = true
     }
 }

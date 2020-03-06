@@ -10,7 +10,9 @@ import UIKit
 
 class SearchViewController: UIViewController {
 
-    var apiClient = APIClient()
+    let artistClient: ArtistProvider = ArtistDataProvider()
+    let albumClient: AlbumProvider = AlbumDataProvider()
+    let imageClient: ImageProvider = ImageDataProvider()
 
     var artistList = [Artist]()
     var topArtist = [Artist]()
@@ -37,15 +39,11 @@ class SearchViewController: UIViewController {
     }
 
     private func getTopArtists() {
-        apiClient.getTopArtists { artists in
+        artistClient.getTopArtists { [updateTable] artists in
             self.topArtist = artists
-            self.artistList = artists
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
+            updateTable(artists)
         }
     }
-
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -94,17 +92,24 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
 
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard let artistCell = cell as? ArtistCell else { return }
+        imageClient.getImage(url: artistList[indexPath.row].picture) { image in
+            artistCell.setImage(image: image)
+        }
+    }
+
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 66
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let artist = artistList[indexPath.row]
-
         SpinnerView.shared.showProgressView()
-        apiClient.getAlbum(fromArtist: "\(artist.id)") { (albums: [Album]) in
+        albumClient.getAlbum(fromArtist: "\(artist.id)") { (albums: [AlbumThinned]) in
             DispatchQueue.main.async {
-                self.navigationController?.pushViewController(AlbumCollection(albums: albums, artist: artist), animated: true)
+                self.navigationController?.pushViewController(AlbumCollection(albums: albums, artist: artist, albumClient: AlbumDataProvider(), imageClient: ImageDataProvider()), animated: true)
                 SpinnerView.shared.hideProgressView()
             }
         }
@@ -122,20 +127,21 @@ extension SearchViewController: UISearchResultsUpdating {
         guard let searchQuery = searchBar.text else { return }
 
         if searchQuery == "" {
-            DispatchQueue.main.async {
-                self.artistList.removeAll()
-                self.artistList = self.topArtist
-                self.tableView.reloadData()
-            }
+            updateTable(artists: topArtist)
         } else {
-            apiClient.getArtist(searchQuery: searchQuery) { artists in
-                DispatchQueue.main.async {
-                    self.artistList.removeAll()
-                    self.artistList = artists
-                    self.tableView.reloadData()
-                }
+            artistClient.getArtist(searchQuery: searchQuery) { [updateTable] (artists: [Artist]) in
+                updateTable(artists)
             }
         }
     }
+
+    private func updateTable(artists: [Artist]) {
+        DispatchQueue.main.async {
+            self.artistList.removeAll()
+            self.artistList = artists
+            self.tableView.reloadData()
+        }
+    }
+
 }
 

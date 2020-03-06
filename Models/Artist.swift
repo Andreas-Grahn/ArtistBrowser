@@ -20,6 +20,6 @@ struct Artist: Decodable, Hashable {
     }
 }
 
-struct DataArtist: Decodable{
+struct APIArtist: Decodable{
     let data: [Artist]
 }

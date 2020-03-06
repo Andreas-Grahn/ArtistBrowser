@@ -10,23 +10,21 @@ import UIKit
 
 class AlbumItem: UICollectionViewCell {
 
-    var apiClient = APIClient()
-
     var artist: Artist? {
         didSet {
             subtitleLabel.text = artist?.name
         }
     }
 
-    var album: Album? {
+    var album: AlbumThinned? {
         didSet {
             titleLabel.text = album?.title
+        }
+    }
 
-            apiClient.getImage(url: album!.cover) { image in
-                DispatchQueue.main.async {
-                    self.imageView.image = image
-                }
-            }
+    func setImage(image: UIImage) {
+        DispatchQueue.main.async {
+            self.imageView.image = image
         }
     }
 
