@@ -12,4 +12,7 @@ enum APIError: Error {
     case network(_ statusCode: Int)
     case unknown(_ error: Error)
     case decoding
+    case device(_ error: Error)
+    case unknownResponseType
+    case noData
 }

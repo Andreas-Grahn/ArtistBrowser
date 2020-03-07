@@ -10,6 +10,7 @@ import Foundation
 
 public final class HTTPClient {
     public static let shared = HTTPClient()
+    private let responseHandler = ResponseHandler()
 
     private lazy var defaultSession: URLSession = {
         let session = URLSession(configuration: .default)
@@ -19,22 +20,20 @@ public final class HTTPClient {
     private let cache = URLCache.shared
 
     func getData(request: URLRequest, completion: @escaping ((Result<Data, APIError>) -> Void)) {
-        DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: .userInitiated).async { [responseHandler] in
             if let data = self.cache.cachedResponse(for: request)?.data{
                 completion(.success(data))
             } else {
-                self.defaultSession.dataTask(with: request) { (data, response, error) in
-                    if let error = error {
-                        completion(.failure(.unknown(error)))
-                    }
-                    let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 500
-
-                    if let data = data, let response = response, statusCode < 300 {
-                        let cachedData = CachedURLResponse(response: response, data: data)
-                        self.cache.storeCachedResponse(cachedData, for: request)
+                self.defaultSession.dataTask(with: request) { [responseHandler] (data, response, error) in
+                    do {
+                        try responseHandler.handle(data: data, response: response, error: error)
+                        let data = try responseHandler.read(data: data)
                         completion(.success(data))
-                    } else {
-                        completion(.failure(.network(statusCode)))
+                    } catch let error as APIError {
+                        completion(.failure(error))
+                    } catch {
+                        let apiError = APIError.device(error)
+                        completion(.failure(apiError))
                     }
                 }.resume()
             }
