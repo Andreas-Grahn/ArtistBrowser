@@ -9,15 +9,15 @@
 import Foundation
 
 protocol ArtistProvider {
-    func getTopArtists(completion: @escaping ([Artist]) -> ())
-    func getArtist(searchQuery: String, completion: @escaping ([Artist]) -> ())
+    func getTopArtists(completion: @escaping (Result<[Artist], APIError>) -> ())
+    func getArtist(searchQuery: String, completion: @escaping (Result<[Artist], APIError>) -> ())
 }
 
 class ArtistDataProvider: ArtistProvider {
 
     private let httpClient = HTTPClient.shared
 
-    func getTopArtists(completion: @escaping ([Artist]) -> ()) {
+    func getTopArtists(completion: @escaping (Result<[Artist], APIError>) -> ()) {
         if let urlComponents = URLComponents(string: "https://api.deezer.com/chart/0/artists") {
             guard let url = urlComponents.url else {
                 return
@@ -31,16 +31,16 @@ class ArtistDataProvider: ArtistProvider {
                 case .success(let data):
                     do {
                         let artistData = try JSONDecoder().decode(APIArtist.self, from: data)
-                        completion(artistData.data)
+                        completion(.success(artistData.data))
                     } catch {
-                        print(error)
+                        completion(.failure(.decoding))
                     }
                 }
             }
         }
     }
 
-    func getArtist(searchQuery: String, completion: @escaping ([Artist]) -> ()) {
+    func getArtist(searchQuery: String, completion: @escaping (Result<[Artist], APIError>) -> ()) {
         if var urlComponents = URLComponents(string: "https://api.deezer.com/search/artist") {
             urlComponents.query = "q=\(searchQuery)"
             guard let url = urlComponents.url else {
@@ -56,9 +56,9 @@ class ArtistDataProvider: ArtistProvider {
                 case .success(let data):
                     do {
                         let artistData = try JSONDecoder().decode(APIArtist.self, from: data)
-                        completion(artistData.data)
+                        completion(.success(artistData.data))
                     } catch {
-                        print(error)
+                        completion(.failure(.decoding))
                     }
                 }
             }

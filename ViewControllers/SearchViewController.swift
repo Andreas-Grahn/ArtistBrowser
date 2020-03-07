@@ -39,9 +39,14 @@ class SearchViewController: UIViewController {
     }
 
     private func getTopArtists() {
-        artistClient.getTopArtists { [updateTable] artists in
-            self.topArtist = artists
-            updateTable(artists)
+        artistClient.getTopArtists { [updateTable] result in
+            switch result {
+            case .failure:
+                break
+            case .success(let artists):
+                self.topArtist = artists
+                updateTable(artists)
+            }
         }
     }
 
@@ -135,8 +140,13 @@ extension SearchViewController: UISearchResultsUpdating {
         if searchQuery == "" {
             updateTable(artists: topArtist)
         } else {
-            artistClient.getArtist(searchQuery: searchQuery) { [updateTable] (artists: [Artist]) in
-                updateTable(artists)
+            artistClient.getArtist(searchQuery: searchQuery) { [updateTable] result in
+                switch result {
+                case .failure:
+                    break
+                case .success(let artists):
+                    updateTable(artists)
+                }
             }
         }
     }
