@@ -9,13 +9,13 @@
 import UIKit
 
 protocol ImageProvider {
-    func getImage(url: String, completion: @escaping ((UIImage) -> Void))
+    func getImage(url: String, completion: @escaping ((Result<UIImage, APIError>) -> Void))
 }
 
 public class ImageDataProvider: ImageProvider {
     private let httpClient = HTTPClient.shared
 
-    func getImage(url: String, completion: @escaping ((UIImage) -> Void)) {
+    func getImage(url: String, completion: @escaping ((Result<UIImage, APIError>) -> Void)) {
         guard let imageURL = URL(string: url) else {
             return
         }
@@ -27,9 +27,9 @@ public class ImageDataProvider: ImageProvider {
                 break
             case .success(let data):
                 if let image = UIImage(data: data) {
-                    completion(image)
+                    completion(.success(image))
                 } else {
-                    completion(UIImage(named: "PlaceholderImage")!)
+                    completion(.failure(.decoding))
                 }
             }
         }

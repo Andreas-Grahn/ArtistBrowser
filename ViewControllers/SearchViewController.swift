@@ -99,8 +99,13 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         guard let artistCell = cell as? ArtistCell else { return }
-        imageClient.getImage(url: artistList[indexPath.row].picture) { image in
-            artistCell.setImage(image: image)
+        imageClient.getImage(url: artistList[indexPath.row].picture) { result in
+            switch result {
+            case .failure:
+                break
+            case .success(let image):
+                artistCell.setImage(image: image)
+            }
         }
     }
 

@@ -78,8 +78,13 @@ extension AlbumCollection: UICollectionViewDataSource, UICollectionViewDelegateF
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let albumItem = cell as? AlbumItem else { return }
         guard let imageUrl = albumItem.album?.cover else { return }
-        imageClient.getImage(url: imageUrl) { image in
-            albumItem.setImage(image: image)
+        imageClient.getImage(url: imageUrl) { result in
+            switch result {
+            case .failure:
+                break
+            case .success(let image):
+                albumItem.setImage(image: image)
+            }
         }
     }
 
@@ -97,10 +102,15 @@ extension AlbumCollection: UICollectionViewDataSource, UICollectionViewDelegateF
             case .failure:
                 break
             case .success(let album):
-                self.imageClient.getImage(url: album.cover) { image in
-                    DispatchQueue.main.async {
-                        self.navigationController?.pushViewController(TracksTableView(album: album, coverImage: image), animated: true)
-                        SpinnerView.shared.hideProgressView()
+                self.imageClient.getImage(url: album.cover) { result in
+                    switch result {
+                    case .failure:
+                        break
+                    case .success(let image):
+                        DispatchQueue.main.async {
+                            self.navigationController?.pushViewController(TracksTableView(album: album, coverImage: image), animated: true)
+                            SpinnerView.shared.hideProgressView()
+                        }
                     }
                 }
             }
