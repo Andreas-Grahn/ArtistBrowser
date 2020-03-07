@@ -14,14 +14,15 @@ protocol AlertDisplayer {
 
 extension AlertDisplayer where Self: UIViewController {
     func displayGenericError() {
-        let title = "Something went wrong"
-        let message = "Something went wrong, try again later"
-
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: "Ok", style: .default)
-        alertController.addAction(action)
         DispatchQueue.main.async {
+            let title = "Something went wrong"
+            let message = "Something went wrong, try again later"
+            
+            let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let action = UIAlertAction(title: "Ok", style: .default)
+            alertController.addAction(action)
             self.present(alertController, animated: true)
+            SpinnerView.shared.hideProgressView()
         }
     }
 }
