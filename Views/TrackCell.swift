@@ -10,35 +10,6 @@ import UIKit
 
 class TrackCell: UITableViewCell {
 
-    var trackDetail: TrackDetail? {
-        didSet { DispatchQueue.main.async {
-            if let details = self.trackDetail {
-                self.indexLabel.text = "\(details.track_position)."
-                self.name.text = details.title
-                var artists = ""
-                for artist in details.contributors {
-                    artists += "\(artist.name), "
-
-                }
-
-                self.artistLabel.text = details.contributors.map({$0.name}).joined(separator: ", ")
-                self.duration.text = self.formatDuration(duration: details.duration)
-            }
-            }
-        }
-    }
-
-    func formatDuration(duration: Int) -> String {
-        let duration = TimeInterval(duration) // 2 minutes, 30 seconds
-
-        let formatter = DateComponentsFormatter()
-        formatter.unitsStyle = .positional
-        formatter.allowedUnits = [ .minute, .second ]
-        formatter.zeroFormattingBehavior = [ .pad ]
-
-        return formatter.string(from: duration)!
-    }
-
     lazy var indexLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.text = "-"
@@ -46,11 +17,11 @@ class TrackCell: UITableViewCell {
         label.font = UIFont.preferredFont(forTextStyle: .headline)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(label)
+        contentView.addSubview(label)
         return label
     }()
 
-    lazy var name: UILabel = {
+    lazy var trackTitle: UILabel = {
         let label = UILabel(frame: .zero)
         label.numberOfLines = 0
         label.text = "-"
@@ -73,7 +44,7 @@ class TrackCell: UITableViewCell {
         label.text = "-"
         label.font = UIFont.preferredFont(forTextStyle: .body)
         label.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(label)
+        contentView.addSubview(label)
         return label
     }()
 
@@ -84,12 +55,10 @@ class TrackCell: UITableViewCell {
         sv.alignment = .leading
 
         sv.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(sv)
-
+        contentView.addSubview(sv)
 
         sv.spacing = 6
-
-        sv.addArrangedSubview(name)
+        sv.addArrangedSubview(trackTitle)
         sv.addArrangedSubview(artistLabel)
         return sv
     }()
@@ -104,22 +73,29 @@ class TrackCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    //Makes sure that trackTitle wraps text properly
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        contentView.layoutIfNeeded()
+        trackTitle.preferredMaxLayoutWidth = trackTitle.frame.width
+    }
+
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            indexLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            indexLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
+            indexLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            indexLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
 
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: indexLabel.trailingAnchor, constant: 10),
-            stackView.topAnchor.constraint(equalTo: topAnchor, constant: 10),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
+            stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
             stackView.trailingAnchor.constraint(lessThanOrEqualTo: duration.leadingAnchor, constant: -10)
         ])
 
         NSLayoutConstraint.activate([
-            duration.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-            duration.centerYAnchor.constraint(equalTo: centerYAnchor)
+            duration.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            duration.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
 }

@@ -74,6 +74,17 @@ class TracksTableView: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
         ])
     }
+
+    private func formatDuration(duration: Int) -> String {
+        let duration = TimeInterval(duration) // 2 minutes, 30 seconds
+
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .positional
+        formatter.allowedUnits = [ .minute, .second ]
+        formatter.zeroFormattingBehavior = [ .pad ]
+
+        return formatter.string(from: duration)!
+    }
 }
 
 extension TracksTableView: UITableViewDelegate, UITableViewDataSource {
@@ -92,7 +103,12 @@ extension TracksTableView: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "trackCell", for: indexPath) as! TrackCell
         let sectionTracks = tracks.filter( {$0.disk_number == indexPath.section+1} )
 
-        cell.trackDetail = sectionTracks[indexPath.row]
+        cell.trackTitle.text = sectionTracks[indexPath.row].title
+        cell.artistLabel.text = sectionTracks[indexPath.row].contributors.map({$0.name}).joined(separator: ", ")
+        cell.indexLabel.text = "\(sectionTracks[indexPath.row].track_position)."
+        cell.duration.text = formatDuration(duration: sectionTracks[indexPath.row].duration)
+
+        cell.layoutIfNeeded()
         return cell
     }
 
@@ -119,7 +135,7 @@ extension UITableView {
 
     private func setFrame(of view: UIView) {
         // Make sure the tableView has the correct frame before proceeding.
-        layoutIfNeeded()
+        //layoutIfNeeded()
 
         view.translatesAutoresizingMaskIntoConstraints = false
         let widthAnchor = view.widthAnchor.constraint(equalToConstant: bounds.width)
