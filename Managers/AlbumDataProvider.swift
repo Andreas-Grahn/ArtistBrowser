@@ -80,9 +80,14 @@ class AlbumDataProvider: AlbumProvider {
                 case .success(let data):
                     do {
                         var album = try JSONDecoder().decode(Album.self, from: data)
-                        self.getTracks(withIds: album.tracksIds.data.map({$0.id})) { tracks in
-                            album.tracks = tracks
-                            completion(.success(album))
+                        self.getTracks(withIds: album.tracksIds.data.map({$0.id})) { result in
+                            switch result {
+                            case .failure(let error):
+                                completion(.failure(.unknown(error)))
+                            case .success(let tracks):
+                                album.tracks = tracks
+                                completion(.success(album))
+                            }
                         }
                     } catch {
                         completion(.failure(.decoding))
@@ -92,14 +97,14 @@ class AlbumDataProvider: AlbumProvider {
         }
     }
 
-    private func getTracks(withIds ids: [Int], completion: @escaping ([TrackDetail]) -> ()) {
+    private func getTracks(withIds ids: [Int], completion: @escaping (Result<[TrackDetail], APIError>) -> ()) {
         let queue = OperationQueue()
         var list = [TrackDetail]()
         let completionOperation = BlockOperation {
             list.sort {
                 ($0.disk_number, $0.track_position) < ($1.disk_number, $1.track_position)
             }
-            completion(list)
+            completion(.success(list))
         }
 
         for id in ids {
@@ -107,9 +112,15 @@ class AlbumDataProvider: AlbumProvider {
                 let group = DispatchGroup()
                 group.enter()
 
-                self.getTrack(withId: "\(id)") { detailedTrack in
-                    list.append(detailedTrack)
-                    group.leave()
+                self.getTrack(withId: "\(id)") { result in
+                    switch result {
+                    case .failure(let error):
+                        completion(.failure(.unknown(error)))
+                        group.leave()
+                    case .success(let detailedTrack):
+                        list.append(detailedTrack)
+                        group.leave()
+                    }
                 }
                 group.wait()
             }
@@ -120,7 +131,7 @@ class AlbumDataProvider: AlbumProvider {
         queue.addOperation(completionOperation)
     }
 
-    private func getTrack(withId id: String, completion: @escaping (TrackDetail) -> ()) {
+    private func getTrack(withId id: String, completion: @escaping (Result<TrackDetail, APIError>) -> ()) {
         if let urlComponents = URLComponents(string: "https://api.deezer.com/track/\(id)") {
             guard let url = urlComponents.url else {
                 return
@@ -129,14 +140,14 @@ class AlbumDataProvider: AlbumProvider {
             httpClient.getData(request: request) { result in
 
                 switch result {
-                case .failure:
-                    break
+                case .failure(let error):
+                    completion(.failure(.unknown(error)))
                 case .success(let data):
                     do {
                         let track = try JSONDecoder().decode(TrackDetail.self, from: data)
-                        completion(track)
+                        completion(.success(track))
                     } catch {
-                        print(error)
+                        completion(.failure(.decoding))
                     }
                 }
             }

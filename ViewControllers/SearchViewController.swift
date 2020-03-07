@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SearchViewController: UIViewController {
+class SearchViewController: UIViewController, AlertDisplayer {
 
     let artistClient: ArtistProvider = ArtistDataProvider()
     let albumClient: AlbumProvider = AlbumDataProvider()
@@ -39,10 +39,10 @@ class SearchViewController: UIViewController {
     }
 
     private func getTopArtists() {
-        artistClient.getTopArtists { [updateTable] result in
+        artistClient.getTopArtists { [updateTable, displayGenericError] result in
             switch result {
             case .failure:
-                break
+                displayGenericError()
             case .success(let artists):
                 self.topArtist = artists
                 updateTable(artists)
@@ -99,10 +99,10 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         guard let artistCell = cell as? ArtistCell else { return }
-        imageClient.getImage(url: artistList[indexPath.row].picture) { result in
+        imageClient.getImage(url: artistList[indexPath.row].picture) { [displayGenericError] result in
             switch result {
             case .failure:
-                break
+                displayGenericError()
             case .success(let image):
                 artistCell.setImage(image: image)
             }
@@ -117,11 +117,11 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let artist = artistList[indexPath.row]
         SpinnerView.shared.showProgressView()
-        albumClient.getAlbum(fromArtist: "\(artist.id)") { result in
+        albumClient.getAlbum(fromArtist: "\(artist.id)") { [displayGenericError] result in
 
             switch result {
             case .failure:
-                break
+                displayGenericError()
             case .success(let albums):
                 DispatchQueue.main.async {
                     self.navigationController?.pushViewController(AlbumCollection(albums: albums, artist: artist, albumClient: AlbumDataProvider(), imageClient: ImageDataProvider()), animated: true)
@@ -145,10 +145,10 @@ extension SearchViewController: UISearchResultsUpdating {
         if searchQuery == "" {
             updateTable(artists: topArtist)
         } else {
-            artistClient.getArtist(searchQuery: searchQuery) { [updateTable] result in
+            artistClient.getArtist(searchQuery: searchQuery) { [updateTable, displayGenericError] result in
                 switch result {
                 case .failure:
-                    break
+                    displayGenericError()
                 case .success(let artists):
                     updateTable(artists)
                 }

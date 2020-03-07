@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AlbumCollection: UIViewController {
+class AlbumCollection: UIViewController, AlertDisplayer {
 
 
     let albumClient: AlbumProvider
@@ -78,10 +78,10 @@ extension AlbumCollection: UICollectionViewDataSource, UICollectionViewDelegateF
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let albumItem = cell as? AlbumItem else { return }
         guard let imageUrl = albumItem.album?.cover else { return }
-        imageClient.getImage(url: imageUrl) { result in
+        imageClient.getImage(url: imageUrl) { [displayGenericError] result in
             switch result {
             case .failure:
-                break
+                displayGenericError()
             case .success(let image):
                 albumItem.setImage(image: image)
             }
@@ -97,15 +97,15 @@ extension AlbumCollection: UICollectionViewDataSource, UICollectionViewDelegateF
 
         SpinnerView.shared.showProgressView()
 
-        albumClient.getAlbumData(fromAlbum: album) { result in
+        albumClient.getAlbumData(fromAlbum: album) { [displayGenericError] result in
             switch result {
             case .failure:
-                break
+                displayGenericError()
             case .success(let album):
-                self.imageClient.getImage(url: album.cover) { result in
+                self.imageClient.getImage(url: album.cover) { [displayGenericError] result in
                     switch result {
                     case .failure:
-                        break
+                        displayGenericError()
                     case .success(let image):
                         DispatchQueue.main.async {
                             self.navigationController?.pushViewController(TracksTableView(album: album, coverImage: image), animated: true)
