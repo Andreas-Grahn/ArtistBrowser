@@ -18,16 +18,23 @@ public final class HTTPClient {
 
     private let cache = URLCache.shared
 
-    func getData(request: URLRequest, completion: @escaping ((Data) -> Void)) {
+    func getData(request: URLRequest, completion: @escaping ((Result<Data, APIError>) -> Void)) {
         DispatchQueue.global(qos: .userInitiated).async {
             if let data = self.cache.cachedResponse(for: request)?.data{
-                completion(data)
+                completion(.success(data))
             } else {
                 self.defaultSession.dataTask(with: request) { (data, response, error) in
-                    if let data = data, let response = response, ((response as? HTTPURLResponse)?.statusCode ?? 500) < 300 {
+                    if let error = error {
+                        completion(.failure(.unknown(error)))
+                    }
+                    let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 500
+
+                    if let data = data, let response = response, statusCode < 300 {
                         let cachedData = CachedURLResponse(response: response, data: data)
                         self.cache.storeCachedResponse(cachedData, for: request)
-                        completion(data)
+                        completion(.success(data))
+                    } else {
+                        completion(.failure(.network(statusCode)))
                     }
                 }.resume()
             }

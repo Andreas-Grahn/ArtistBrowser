@@ -21,11 +21,16 @@ public class ImageDataProvider: ImageProvider {
         }
 
         let request = URLRequest(url: imageURL)
-        httpClient.getData(request: request) { data in
-            if let image = UIImage(data: data) {
-                completion(image)
-            } else {
-                completion(UIImage(named: "PlaceholderImage")!)
+        httpClient.getData(request: request) { result in
+            switch result {
+            case .failure:
+                break
+            case .success(let data):
+                if let image = UIImage(data: data) {
+                    completion(image)
+                } else {
+                    completion(UIImage(named: "PlaceholderImage")!)
+                }
             }
         }
     }

@@ -24,12 +24,17 @@ class ArtistDataProvider: ArtistProvider {
             }
 
             let request = URLRequest(url: url)
-            httpClient.getData(request: request) { data in
-                do {
-                    let artistData = try JSONDecoder().decode(APIArtist.self, from: data)
-                    completion(artistData.data)
-                } catch {
-                    print(error)
+            httpClient.getData(request: request) { result in
+                switch result {
+                case .failure:
+                    break
+                case .success(let data):
+                    do {
+                        let artistData = try JSONDecoder().decode(APIArtist.self, from: data)
+                        completion(artistData.data)
+                    } catch {
+                        print(error)
+                    }
                 }
             }
         }
@@ -43,12 +48,18 @@ class ArtistDataProvider: ArtistProvider {
             }
 
             let request = URLRequest(url: url)
-            httpClient.getData(request: request) { data in
-                do {
-                    let artistData = try JSONDecoder().decode(APIArtist.self, from: data)
-                    completion(artistData.data)
-                } catch {
-                    print(error)
+            httpClient.getData(request: request) { result in
+
+                switch result {
+                case .failure:
+                    break
+                case .success(let data):
+                    do {
+                        let artistData = try JSONDecoder().decode(APIArtist.self, from: data)
+                        completion(artistData.data)
+                    } catch {
+                        print(error)
+                    }
                 }
             }
         }

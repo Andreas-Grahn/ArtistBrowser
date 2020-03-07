@@ -25,12 +25,18 @@ class AlbumDataProvider: AlbumProvider {
             }
             let request = URLRequest(url: url)
 
-            httpClient.getData(request: request) { data in
-                do {
-                    let albumData = try JSONDecoder().decode([AlbumThinned].self, from: data)
-                    completion(albumData)
-                } catch {
-                    print(error)
+            httpClient.getData(request: request) { result in
+
+                switch result {
+                case .failure:
+                    break
+                case .success(let data):
+                    do {
+                        let albumData = try JSONDecoder().decode([AlbumThinned].self, from: data)
+                        completion(albumData)
+                    } catch {
+                        print(error)
+                    }
                 }
             }
         }
@@ -44,12 +50,17 @@ class AlbumDataProvider: AlbumProvider {
             }
             let request = URLRequest(url: url)
 
-            httpClient.getData(request: request) { data in
-                do {
-                    let albums = try JSONDecoder().decode(AlbumThinnedData.self, from: data)
-                    completion(albums.data)
-                } catch {
-                    print(error)
+            httpClient.getData(request: request) { result in
+                switch result {
+                case .failure:
+                    break
+                case .success(let data):
+                    do {
+                        let albums = try JSONDecoder().decode(AlbumThinnedData.self, from: data)
+                        completion(albums.data)
+                    } catch {
+                        print(error)
+                    }
                 }
             }
         }
@@ -62,15 +73,20 @@ class AlbumDataProvider: AlbumProvider {
             }
             let request = URLRequest(url: url)
 
-            httpClient.getData(request: request) { data in
-                do {
-                    var album = try JSONDecoder().decode(Album.self, from: data)
-                    self.getTracks(withIds: album.tracksIds.data.map({$0.id})) { tracks in
-                        album.tracks = tracks
-                        completion(album)
+            httpClient.getData(request: request) { result in
+                switch result {
+                case .failure:
+                    break
+                case .success(let data):
+                    do {
+                        var album = try JSONDecoder().decode(Album.self, from: data)
+                        self.getTracks(withIds: album.tracksIds.data.map({$0.id})) { tracks in
+                            album.tracks = tracks
+                            completion(album)
+                        }
+                    } catch {
+                        print(error)
                     }
-                } catch {
-                    print(error)
                 }
             }
         }
@@ -110,12 +126,18 @@ class AlbumDataProvider: AlbumProvider {
                 return
             }
             let request = URLRequest(url: url)
-            httpClient.getData(request: request) { data in
-                do {
-                    let track = try JSONDecoder().decode(TrackDetail.self, from: data)
-                    completion(track)
-                } catch {
-                    print(error)
+            httpClient.getData(request: request) { result in
+
+                switch result {
+                case .failure:
+                    break
+                case .success(let data):
+                    do {
+                        let track = try JSONDecoder().decode(TrackDetail.self, from: data)
+                        completion(track)
+                    } catch {
+                        print(error)
+                    }
                 }
             }
         }
