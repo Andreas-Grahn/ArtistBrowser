@@ -14,7 +14,7 @@ protocol ArtistProvider {
 }
 
 class ArtistDataProvider: ArtistProvider {
-
+    
     private let httpClient = HTTPClient.shared
 
     func getTopArtists(completion: @escaping (Result<[Artist], APIError>) -> ()) {
@@ -26,8 +26,8 @@ class ArtistDataProvider: ArtistProvider {
             let request = URLRequest(url: url)
             httpClient.getData(request: request) { result in
                 switch result {
-                case .failure:
-                    break
+                case .failure(let error):
+                    completion(.failure(.unknown(error)))
                 case .success(let data):
                     do {
                         let artistData = try JSONDecoder().decode(APIArtist.self, from: data)
@@ -51,8 +51,8 @@ class ArtistDataProvider: ArtistProvider {
             httpClient.getData(request: request) { result in
 
                 switch result {
-                case .failure:
-                    break
+                case .failure(let error):
+                    completion(.failure(.unknown(error)))
                 case .success(let data):
                     do {
                         let artistData = try JSONDecoder().decode(APIArtist.self, from: data)

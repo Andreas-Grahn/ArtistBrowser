@@ -23,8 +23,8 @@ public class ImageDataProvider: ImageProvider {
         let request = URLRequest(url: imageURL)
         httpClient.getData(request: request) { result in
             switch result {
-            case .failure:
-                break
+            case .failure(let error):
+                completion(.failure(.unknown(error)))
             case .success(let data):
                 if let image = UIImage(data: data) {
                     completion(.success(image))

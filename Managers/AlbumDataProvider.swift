@@ -28,8 +28,8 @@ class AlbumDataProvider: AlbumProvider {
             httpClient.getData(request: request) { result in
 
                 switch result {
-                case .failure:
-                    break
+                case .failure(let error):
+                    completion(.failure(.unknown(error)))
                 case .success(let data):
                     do {
                         let albumData = try JSONDecoder().decode([AlbumThinned].self, from: data)
@@ -52,8 +52,8 @@ class AlbumDataProvider: AlbumProvider {
 
             httpClient.getData(request: request) { result in
                 switch result {
-                case .failure:
-                    break
+                case .failure(let error):
+                    completion(.failure(.unknown(error)))
                 case .success(let data):
                     do {
                         let albums = try JSONDecoder().decode(AlbumThinnedData.self, from: data)
@@ -75,8 +75,8 @@ class AlbumDataProvider: AlbumProvider {
 
             httpClient.getData(request: request) { result in
                 switch result {
-                case .failure:
-                    break
+                case .failure(let error):
+                    completion(.failure(.unknown(error)))
                 case .success(let data):
                     do {
                         var album = try JSONDecoder().decode(Album.self, from: data)
