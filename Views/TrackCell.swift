@@ -75,9 +75,9 @@ class TrackCell: UITableViewCell {
 
     //Makes sure that trackTitle wraps text properly
     override func layoutSubviews() {
-        super.layoutSubviews()
         contentView.layoutIfNeeded()
-        trackTitle.preferredMaxLayoutWidth = trackTitle.frame.width
+        trackTitle.preferredMaxLayoutWidth = stackView.frame.width
+        super.layoutSubviews()
     }
 
     private func setupConstraints() {
@@ -90,7 +90,7 @@ class TrackCell: UITableViewCell {
             stackView.leadingAnchor.constraint(equalTo: indexLabel.trailingAnchor, constant: 10),
             stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
-            stackView.trailingAnchor.constraint(lessThanOrEqualTo: duration.leadingAnchor, constant: -10)
+            stackView.trailingAnchor.constraint(equalTo: duration.leadingAnchor, constant: -10)
         ])
 
         NSLayoutConstraint.activate([
