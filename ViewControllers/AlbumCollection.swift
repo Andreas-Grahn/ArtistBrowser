@@ -92,11 +92,16 @@ extension AlbumCollection: UICollectionViewDataSource, UICollectionViewDelegateF
 
         SpinnerView.shared.showProgressView()
 
-        albumClient.getAlbumData(fromAlbum: album) { album in
-            self.imageClient.getImage(url: album.cover) { image in
-                DispatchQueue.main.async {
-                    self.navigationController?.pushViewController(TracksTableView(album: album, coverImage: image), animated: true)
-                    SpinnerView.shared.hideProgressView()
+        albumClient.getAlbumData(fromAlbum: album) { result in
+            switch result {
+            case .failure:
+                break
+            case .success(let album):
+                self.imageClient.getImage(url: album.cover) { image in
+                    DispatchQueue.main.async {
+                        self.navigationController?.pushViewController(TracksTableView(album: album, coverImage: image), animated: true)
+                        SpinnerView.shared.hideProgressView()
+                    }
                 }
             }
         }

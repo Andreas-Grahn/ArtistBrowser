@@ -9,15 +9,15 @@
 import Foundation
 
 protocol AlbumProvider {
-    func getAlbums(searchQuery: String, completion: @escaping ([AlbumThinned]) -> ())
-    func getAlbumData(fromAlbum album: AlbumThinned, completion: @escaping (Album) -> ())
-    func getAlbum(fromArtist id: String, completion: @escaping ([AlbumThinned]) -> ())
+    func getAlbums(searchQuery: String, completion: @escaping (Result<[AlbumThinned], APIError>) -> ())
+    func getAlbumData(fromAlbum album: AlbumThinned, completion: @escaping (Result<Album, APIError>) -> ())
+    func getAlbum(fromArtist id: String, completion: @escaping (Result<[AlbumThinned], APIError>) -> ())
 }
 
 class AlbumDataProvider: AlbumProvider {
     private let httpClient = HTTPClient.shared
 
-    func getAlbums(searchQuery: String, completion: @escaping ([AlbumThinned]) -> ()) {
+    func getAlbums(searchQuery: String, completion: @escaping (Result<[AlbumThinned], APIError>) -> ()) {
         if var urlComponents = URLComponents(string: "https://api.deezer.com/search/album") {
             urlComponents.query = "q=\(searchQuery)"
             guard let url = urlComponents.url else {
@@ -33,16 +33,16 @@ class AlbumDataProvider: AlbumProvider {
                 case .success(let data):
                     do {
                         let albumData = try JSONDecoder().decode([AlbumThinned].self, from: data)
-                        completion(albumData)
+                        completion(.success(albumData))
                     } catch {
-                        print(error)
+                        completion(.failure(.decoding))
                     }
                 }
             }
         }
     }
 
-    func getAlbum(fromArtist id: String, completion: @escaping ([AlbumThinned]) -> ()) {
+    func getAlbum(fromArtist id: String, completion: @escaping (Result<[AlbumThinned], APIError>) -> ()) {
 
         if let urlComponents = URLComponents(string: "https://api.deezer.com/artist/\(id)/albums") {
             guard let url = urlComponents.url else {
@@ -57,16 +57,16 @@ class AlbumDataProvider: AlbumProvider {
                 case .success(let data):
                     do {
                         let albums = try JSONDecoder().decode(AlbumThinnedData.self, from: data)
-                        completion(albums.data)
+                        completion(.success(albums.data))
                     } catch {
-                        print(error)
+                        completion(.failure(.decoding))
                     }
                 }
             }
         }
     }
 
-    func getAlbumData(fromAlbum albumThinned: AlbumThinned, completion: @escaping (Album) -> ()) {
+    func getAlbumData(fromAlbum albumThinned: AlbumThinned, completion: @escaping (Result<Album, APIError>) -> ()) {
         if let urlComponents = URLComponents(string: "https://api.deezer.com/album/\(albumThinned.id)") {
             guard let url = urlComponents.url else {
                 return
@@ -82,10 +82,10 @@ class AlbumDataProvider: AlbumProvider {
                         var album = try JSONDecoder().decode(Album.self, from: data)
                         self.getTracks(withIds: album.tracksIds.data.map({$0.id})) { tracks in
                             album.tracks = tracks
-                            completion(album)
+                            completion(.success(album))
                         }
                     } catch {
-                        print(error)
+                        completion(.failure(.decoding))
                     }
                 }
             }

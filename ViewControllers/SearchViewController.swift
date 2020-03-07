@@ -107,10 +107,16 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let artist = artistList[indexPath.row]
         SpinnerView.shared.showProgressView()
-        albumClient.getAlbum(fromArtist: "\(artist.id)") { (albums: [AlbumThinned]) in
-            DispatchQueue.main.async {
-                self.navigationController?.pushViewController(AlbumCollection(albums: albums, artist: artist, albumClient: AlbumDataProvider(), imageClient: ImageDataProvider()), animated: true)
-                SpinnerView.shared.hideProgressView()
+        albumClient.getAlbum(fromArtist: "\(artist.id)") { result in
+
+            switch result {
+            case .failure:
+                break
+            case .success(let albums):
+                DispatchQueue.main.async {
+                    self.navigationController?.pushViewController(AlbumCollection(albums: albums, artist: artist, albumClient: AlbumDataProvider(), imageClient: ImageDataProvider()), animated: true)
+                    SpinnerView.shared.hideProgressView()
+                }
             }
         }
     }
