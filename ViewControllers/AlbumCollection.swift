@@ -70,15 +70,14 @@ extension AlbumCollection: UICollectionViewDataSource, UICollectionViewDelegateF
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AlbumItem.getReuseId(), for: indexPath) as! AlbumItem
-        cell.album = albums[indexPath.item]
-        cell.artist = artist
+        cell.titleLabel.text = albums[indexPath.item].title
+        cell.subtitleLabel.text = artist.name
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let albumItem = cell as? AlbumItem else { return }
-        guard let imageUrl = albumItem.album?.cover else { return }
-        imageClient.getImage(url: imageUrl) { [displayGenericError] result in
+        imageClient.getImage(url: albums[indexPath.item].cover ) { [displayGenericError] result in
             switch result {
             case .failure:
                 displayGenericError()

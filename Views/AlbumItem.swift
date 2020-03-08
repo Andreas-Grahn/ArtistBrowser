@@ -14,18 +14,6 @@ class AlbumItem: UICollectionViewCell {
         return String(describing: self)
     }
 
-    var artist: Artist? {
-        didSet {
-            subtitleLabel.text = artist?.name
-        }
-    }
-
-    var album: AlbumThinned? {
-        didSet {
-            titleLabel.text = album?.title
-        }
-    }
-
     func setImage(image: UIImage) {
         DispatchQueue.main.async {
             self.imageView.image = image
