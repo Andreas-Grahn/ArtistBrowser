@@ -55,7 +55,7 @@ final class HTTPResponseHandlerTests: XCTestCase {
         do {
             try responseHandler.handle(data: nil, response: nil, error: error)
         } catch let error as APIError {
-            guard case let APIError.device(clientError) = error else {
+            guard case APIError.device(_) = error else {
                 XCTFail()
                 return
             }
