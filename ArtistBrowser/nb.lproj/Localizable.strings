@@ -10,3 +10,7 @@
 "SEARCH_FOR_ARTIST" = "Søk etter artist";
 
 "VOLUME_NUMBER_OF_PLATES" = "Volume";
+
+"GENERIC_ERROR_TITLE" = "Noe gikk galt";
+
+"GENERIC_ERROR_MESSAGE" = "Noe gikk galt, prøv igjen senere";

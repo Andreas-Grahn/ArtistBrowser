@@ -15,8 +15,8 @@ protocol AlertDisplayer {
 extension AlertDisplayer where Self: UIViewController {
     func displayGenericError() {
         DispatchQueue.main.async {
-            let title = "Something went wrong"
-            let message = "Something went wrong, try again later"
+            let title = NSLocalizedString("GENERIC_ERROR_TITLE", comment: "Generic error alert title")
+            let message = NSLocalizedString("GENERIC_ERROR_MESSAGE", comment: "Generic error alert message")
             
             let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
             let action = UIAlertAction(title: "Ok", style: .default)

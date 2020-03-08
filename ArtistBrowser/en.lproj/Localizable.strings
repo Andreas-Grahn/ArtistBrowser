@@ -10,3 +10,7 @@
 "SEARCH_FOR_ARTIST" = "Search for artist";
 
 "VOLUME_NUMBER_OF_PLATES" = "Volume";
+
+"GENERIC_ERROR_TITLE" = "Something went wrong";
+
+"GENERIC_ERROR_MESSAGE" = "Something went wrong, try again later";
