@@ -93,7 +93,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "artistCellId", for: indexPath) as! ArtistCell
-        cell.artist = artistList[indexPath.row]
+        cell.artistLabel.text = artistList[indexPath.row].name
         return cell
     }
 

@@ -10,13 +10,6 @@ import UIKit
 
 class ArtistCell: UITableViewCell {
 
-
-    var artist: Artist? {
-        didSet {
-            artistLabel.text = artist?.name
-        }
-    }
-
     func setImage(image: UIImage) {
         DispatchQueue.main.async {
             let renderer = UIGraphicsImageRenderer(size: CGSize(width: 50, height: 50))
