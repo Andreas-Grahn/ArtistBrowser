@@ -34,7 +34,7 @@ class SpinnerView {
 
         contentView.addSubview(activityIndicator)
         backgroundView.addSubview(contentView)
-        UIApplication.shared.keyWindow?.addSubview(backgroundView)
+        UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.addSubview(backgroundView)
 
         activityIndicator.startAnimating()
     }
