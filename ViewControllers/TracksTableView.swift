@@ -113,7 +113,7 @@ extension TracksTableView: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return "Volume \(section+1)"
+        return "\(NSLocalizedString("VOLUME_NUMBER_OF_PLATES", comment: "Number of plates prefix")) \(section+1)"
     }
 
 }

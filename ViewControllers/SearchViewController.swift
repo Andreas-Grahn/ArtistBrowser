@@ -52,7 +52,7 @@ class SearchViewController: UIViewController, AlertDisplayer {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Top artists"
+        title = NSLocalizedString("TOP_ARTISTS", comment: "Most popular artists")
         view.backgroundColor = .systemBackground
 
         tableView.register(ArtistCell.self, forCellReuseIdentifier: "artistCellId")
@@ -65,7 +65,7 @@ class SearchViewController: UIViewController, AlertDisplayer {
     func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Search for artist"
+        searchController.searchBar.placeholder = NSLocalizedString("SEARCH_FOR_ARTIST", comment: "Search for artist")
         self.navigationItem.searchController = searchController
         searchController.definesPresentationContext = true
     }

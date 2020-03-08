@@ -1,0 +1,12 @@
+/* 
+  Localizable.strings
+  ArtistBrowser
+
+  Created by Andreas Grahn on 08/03/2020.
+  Copyright © 2020 Andreas Grahn. All rights reserved.
+*/
+"TOP_ARTISTS" = "Top artister";
+
+"SEARCH_FOR_ARTIST" = "Søk etter artist";
+
+"VOLUME_NUMBER_OF_PLATES" = "Volume";
