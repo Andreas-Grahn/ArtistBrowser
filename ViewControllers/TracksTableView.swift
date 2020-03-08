@@ -30,7 +30,7 @@ class TracksTableView: UIViewController {
         var tv = UITableView(frame: .zero, style: .grouped)
         tv.delegate = self
         tv.dataSource = self
-        tv.register(TrackCell.self, forCellReuseIdentifier: "trackCell")
+        tv.register(TrackCell.self, forCellReuseIdentifier: TrackCell.getReuseId())
         tv.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(tv)
         return tv
@@ -100,7 +100,7 @@ extension TracksTableView: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        let cell = tableView.dequeueReusableCell(withIdentifier: "trackCell", for: indexPath) as! TrackCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: TrackCell.getReuseId(), for: indexPath) as! TrackCell
         let sectionTracks = tracks.filter( {$0.disk_number == indexPath.section+1} )
 
         cell.trackTitle.text = sectionTracks[indexPath.row].title

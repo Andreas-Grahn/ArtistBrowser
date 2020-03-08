@@ -10,6 +10,10 @@ import UIKit
 
 class AlbumItem: UICollectionViewCell {
 
+    static func getReuseId() -> String {
+        return String(describing: self)
+    }
+
     var artist: Artist? {
         didSet {
             subtitleLabel.text = artist?.name

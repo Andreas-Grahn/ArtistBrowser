@@ -55,7 +55,7 @@ class SearchViewController: UIViewController, AlertDisplayer {
         title = NSLocalizedString("TOP_ARTISTS", comment: "Most popular artists")
         view.backgroundColor = .systemBackground
 
-        tableView.register(ArtistCell.self, forCellReuseIdentifier: "artistCellId")
+        tableView.register(ArtistCell.self, forCellReuseIdentifier: ArtistCell.getReuseId())
 
         setupSearchController()
         setupConstraints()
@@ -92,7 +92,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "artistCellId", for: indexPath) as! ArtistCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: ArtistCell.getReuseId(), for: indexPath) as! ArtistCell
         cell.artistLabel.text = artistList[indexPath.row].name
         return cell
     }

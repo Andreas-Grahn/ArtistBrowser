@@ -10,6 +10,10 @@ import UIKit
 
 class TrackCell: UITableViewCell {
 
+    static func getReuseId() -> String {
+        return String(describing: self)
+    }
+
     lazy var indexLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.text = "-"

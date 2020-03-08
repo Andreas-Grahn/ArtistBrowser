@@ -28,7 +28,7 @@ class AlbumCollection: UIViewController, AlertDisplayer {
         cv.delegate = self
         cv.dataSource = self
         cv.translatesAutoresizingMaskIntoConstraints = false
-        cv.register(AlbumItem.self, forCellWithReuseIdentifier: "albumItem")
+        cv.register(AlbumItem.self, forCellWithReuseIdentifier: AlbumItem.getReuseId())
         view.addSubview(cv)
         cv.delaysContentTouches = false
         return cv
@@ -69,7 +69,7 @@ extension AlbumCollection: UICollectionViewDataSource, UICollectionViewDelegateF
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "albumItem", for: indexPath) as! AlbumItem
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AlbumItem.getReuseId(), for: indexPath) as! AlbumItem
         cell.album = albums[indexPath.item]
         cell.artist = artist
         return cell

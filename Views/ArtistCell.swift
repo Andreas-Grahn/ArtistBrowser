@@ -10,6 +10,10 @@ import UIKit
 
 class ArtistCell: UITableViewCell {
 
+    static func getReuseId() -> String {
+        return String(describing: self)
+    }
+
     func setImage(image: UIImage) {
         DispatchQueue.main.async {
             let renderer = UIGraphicsImageRenderer(size: CGSize(width: 50, height: 50))
