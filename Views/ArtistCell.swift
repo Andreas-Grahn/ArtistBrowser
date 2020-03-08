@@ -51,11 +51,9 @@ class ArtistCell: UITableViewCell {
         if let image = UIImage(named: "PlaceholderImage")?.withTintColor(.gray, renderingMode: .automatic) {
             setImage(image: image)
         }
-
-
     }
 
-    func setupConstraint() {
+    private func setupConstraint() {
         NSLayoutConstraint.activate([
             artistImage.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             artistImage.centerYAnchor.constraint(equalTo: centerYAnchor)
@@ -66,8 +64,6 @@ class ArtistCell: UITableViewCell {
             artistLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -10),
             artistLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
-
-
     }
 
     required init?(coder: NSCoder) {

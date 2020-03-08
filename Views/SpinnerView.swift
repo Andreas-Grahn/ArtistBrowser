@@ -11,9 +11,9 @@ import UIKit
 class SpinnerView {
     public static let shared = SpinnerView()
 
-    var backgroundView = UIView()
-    var contentView = UIView()
-    var activityIndicator = UIActivityIndicatorView()
+    private var backgroundView = UIView()
+    private var contentView = UIView()
+    private var activityIndicator = UIActivityIndicatorView()
 
     open func showProgressView() {
         let window = UIWindow(frame: UIScreen.main.bounds)

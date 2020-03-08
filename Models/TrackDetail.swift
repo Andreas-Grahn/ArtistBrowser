@@ -9,14 +9,14 @@
 import Foundation
 
 struct TrackDetail: Decodable {
-    var id: Int
-    var title: String
-    var duration: Int
-    var track_position: Int
-    var disk_number: Int
-    var contributors: [Artist]
+    let id: Int
+    let title: String
+    let duration: Int
+    let track_position: Int
+    let disk_number: Int
+    let contributors: [Artist]
 }
 
 struct TrackDetailData: Decodable {
-    var data: [TrackDetail]
+    let data: [TrackDetail]
 }

@@ -10,12 +10,12 @@ import UIKit
 
 class SearchViewController: UIViewController, AlertDisplayer {
 
-    let artistClient: ArtistProvider = ArtistDataProvider()
-    let albumClient: AlbumProvider = AlbumDataProvider()
-    let imageClient: ImageProvider = ImageDataProvider()
+    private let artistClient: ArtistProvider = ArtistDataProvider()
+    private let albumClient: AlbumProvider = AlbumDataProvider()
+    private let imageClient: ImageProvider = ImageDataProvider()
 
-    var artistList = [Artist]()
-    var topArtist = [Artist]()
+    private var artistList = [Artist]()
+    private var topArtist = [Artist]()
 
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
@@ -29,12 +29,12 @@ class SearchViewController: UIViewController, AlertDisplayer {
         return tableView
     }()
 
-    lazy var searchController: UISearchController = {
+    private lazy var searchController: UISearchController = {
         let sc = UISearchController(searchResultsController: nil)
         return sc
     }()
 
-    var isSearchBarEmpty: Bool {
+    private var isSearchBarEmpty: Bool {
       return searchController.searchBar.text?.isEmpty ?? true
     }
 
@@ -62,7 +62,7 @@ class SearchViewController: UIViewController, AlertDisplayer {
         getTopArtists()
     }
 
-    func setupSearchController() {
+    private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = NSLocalizedString("SEARCH_FOR_ARTIST", comment: "Search for artist")
@@ -70,7 +70,7 @@ class SearchViewController: UIViewController, AlertDisplayer {
         searchController.definesPresentationContext = true
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),

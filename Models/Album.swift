@@ -12,7 +12,7 @@ struct Album: Decodable {
     let id: Int
     let title: String
     let cover: String
-    var artist: Artist?
+    let artist: Artist?
     let tracksIds: TrackIdData
     var tracks: [TrackDetail]?
 
@@ -31,21 +31,4 @@ struct TrackIdData: Decodable {
 
 struct TrackId: Decodable {
     let id: Int
-}
-
-
-struct AlbumThinned: Decodable {
-    let id: Int
-    let title: String
-    let cover: String
-
-    enum CodingKeys: String, CodingKey {
-        case id
-        case title
-        case cover = "cover_medium"
-    }
-}
-
-struct AlbumThinnedData: Decodable {
-    let data: [AlbumThinned]
 }

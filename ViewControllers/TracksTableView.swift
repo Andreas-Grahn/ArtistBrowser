@@ -10,9 +10,9 @@ import UIKit
 
 class TracksTableView: UIViewController {
 
-    let album: Album
-    let tracks: [TrackDetail]
-    let coverImage: UIImage
+    private let album: Album
+    private let tracks: [TrackDetail]
+    private let coverImage: UIImage
 
 
     init(album: Album, coverImage: UIImage) {
@@ -26,7 +26,7 @@ class TracksTableView: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    lazy var tableView: UITableView = {
+    private lazy var tableView: UITableView = {
         var tv = UITableView(frame: .zero, style: .grouped)
         tv.delegate = self
         tv.dataSource = self
@@ -36,7 +36,7 @@ class TracksTableView: UIViewController {
         return tv
     }()
 
-    lazy var imageContainer: UIView = {
+    private lazy var imageContainer: UIView = {
         var container = UIView()
         container.translatesAutoresizingMaskIntoConstraints = false
 

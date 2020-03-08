@@ -11,12 +11,12 @@ import UIKit
 class AlbumCollection: UIViewController, AlertDisplayer {
 
 
-    let albumClient: AlbumProvider
-    let imageClient: ImageProvider
-    var albums: [AlbumThinned]
-    var artist: Artist
+    private let albumClient: AlbumProvider
+    private let imageClient: ImageProvider
+    private var albums: [AlbumThinned]
+    private var artist: Artist
 
-    lazy var collectionView: UICollectionView = {
+    private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 5
@@ -53,7 +53,7 @@ class AlbumCollection: UIViewController, AlertDisplayer {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setupConstraint() {
+    private func setupConstraint() {
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
